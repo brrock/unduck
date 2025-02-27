@@ -1,6 +1,21 @@
 import { bangs } from "./bang";
 import "./global.css";
 
+function setCookie(name: string, value: string, days = 365) {
+  const expires = new Date();
+  expires.setTime(expires.getTime() + days * 24 * 60 * 60 * 1000);
+  document.cookie = `${name}=${value};expires=${expires.toUTCString()};path=/`;
+}
+
+function getCookie(name: string) {
+  const match = document.cookie.match(new RegExp(`(^| )${name}=([^;]+)`));
+  return match ? match[2] : null;
+}
+
+function deleteCookie(name: string) {
+  document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+}
+
 function noSearchDefaultPageRender() {
   const app = document.querySelector<HTMLDivElement>("#app")!;
   app.innerHTML = `
@@ -21,11 +36,7 @@ function noSearchDefaultPageRender() {
         </div>
         <label class="bang-container">
           <p>Default Bang (currently <span class="bang-current"></span>)</p>
-          <input
-            class="bang-input"
-            type="text"
-            value="g"
-          />
+          <input class="bang-input" type="text" value="g" />
         </label>
       </div>
       <footer class="footer">
@@ -53,13 +64,15 @@ function noSearchDefaultPageRender() {
     }, 2000);
   });
 
-  bangCurrent.innerText = bangInput.value =
-    localStorage.getItem("default-bang") ?? "g";
+  // Get default bang from localStorage or cookies
+  let savedBang = localStorage.getItem("default-bang") || getCookie("default-bang") || "g";
+  bangCurrent.innerText = bangInput.value = savedBang;
 
   bangInput.addEventListener("input", () => {
     if (!bangInput.value) return;
     if (bangs.some((b) => b.t === bangInput.value)) {
       localStorage.setItem("default-bang", bangInput.value);
+      setCookie("default-bang", bangInput.value);
       bangInput.setCustomValidity("");
       bangCurrent.innerText = bangInput.value;
     } else {
@@ -68,7 +81,7 @@ function noSearchDefaultPageRender() {
   });
 }
 
-const LS_DEFAULT_BANG = localStorage.getItem("default-bang") ?? "g";
+const LS_DEFAULT_BANG = localStorage.getItem("default-bang") || getCookie("default-bang") || "g";
 const defaultBang = bangs.find((b) => b.t === LS_DEFAULT_BANG);
 
 function getBangredirectUrl() {
