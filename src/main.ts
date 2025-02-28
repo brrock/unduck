@@ -107,13 +107,20 @@ const defaultBang = typedBangs.find((b) =>
 function getBangredirectUrl() {
   const url = new URL(window.location.href);
   const query = url.searchParams.get("q")?.trim() ?? "";
+  const defaultBangParam = url.searchParams.get("default")?.trim();
+  
+  // If default bang is provided and valid, save it
+  if (defaultBangParam && typedBangs.some(b => b.t === defaultBangParam)) {
+    localStorage.setItem("default-bang", defaultBangParam);
+    setCookie("default-bang", defaultBangParam);
+  }
+
   if (!query) {
     noSearchDefaultPageRender();
     return null;
   }
 
   const match = query.match(/!(\S+)/i);
-
   const bangCandidate = match?.[1]?.toLowerCase();
   const selectedBang = typedBangs.find((b) => 
     typeof b === 'object' && b !== null && 'u' in b && 't' in b && b.t === bangCandidate
