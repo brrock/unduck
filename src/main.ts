@@ -67,6 +67,7 @@ function noSearchDefaultPageRender() {
 
   bangInput.addEventListener("input", () => {
     if (!bangInput.value) return;
+    // @ts-ignore omg
     if (bangs.some((b) => b.t === bangInput.value)) {
       localStorage.setItem("default-bang", bangInput.value);
       setCookie("default-bang", bangInput.value);
@@ -79,6 +80,7 @@ function noSearchDefaultPageRender() {
 }
 
 const LS_DEFAULT_BANG = localStorage.getItem("default-bang") || getCookie("default-bang") || "g";
+// @ts-ignore omg
 const defaultBang = bangs.find((b) => b.t === LS_DEFAULT_BANG);
 
 function getBangredirectUrl() {
@@ -92,6 +94,7 @@ function getBangredirectUrl() {
   const match = query.match(/!(\S+)/i);
 
   const bangCandidate = match?.[1]?.toLowerCase();
+  // @ts-ignore omg
   const selectedBang = bangs.find((b) => b.t === bangCandidate) ?? defaultBang;
 
   // Remove the first bang from the query
@@ -99,6 +102,7 @@ function getBangredirectUrl() {
 
   // Format of the url is:
   // https://www.google.com/search?q={{{s}}}
+  // @ts-ignore omg
   const searchUrl = selectedBang?.u.replace(
     "{{{s}}}",
     // Replace %2F with / to fix formats like "!ghr+t3dotgg/unduck"

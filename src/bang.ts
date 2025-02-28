@@ -1,5 +1,5 @@
 /* Mostly ripped from duckduckgo.com/bang.js */
-const bangs = [
+export const bangs = [
 [
   [
     "01net",

@@ -85,7 +85,7 @@ jq '. + [
 echo "Adding TypeScript declaration..."
 {
     echo "/* Mostly ripped from duckduckgo.com/bang.js */"
-    echo "const bangs = ["
+    echo "export const bangs = ["
     cat "$FINAL_TS"
     echo "];"
 } > temp.ts && mv temp.ts "$FINAL_TS"
