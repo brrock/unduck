@@ -154,3 +154,245 @@ input, textarea {
     color: #878787 !important;
   }
 }
+
+/* Bang Manager Styles */
+.bang-manager {
+  margin-top: 24px;
+  width: 100%;
+  text-align: left;
+}
+
+.toggle-manager-btn {
+  background: #222;
+  padding: 8px 16px;
+  border-radius: 4px;
+  color: #fff;
+  font-weight: 500;
+  transition: all 0.2s;
+  width: 100%;
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.toggle-manager-btn:hover {
+  background: #333;
+}
+
+.manager-content {
+  background: #1a1a1a;
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.search-container {
+  margin-bottom: 16px;
+}
+
+.search-input {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #333;
+  border-radius: 4px;
+  background: #222;
+  color: #fff;
+}
+
+.bangs-list {
+  max-height: 400px;
+  overflow-y: auto;
+  margin-bottom: 16px;
+  border-radius: 4px;
+  background: #222;
+}
+
+.bang-item {
+  padding: 12px;
+  border-bottom: 1px solid #333;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.bang-item:last-child {
+  border-bottom: none;
+}
+
+.bang-info {
+  flex: 1;
+  color: #fff;
+}
+
+.bang-domain {
+  color: #888;
+  font-size: 0.9em;
+  margin-left: 8px;
+}
+
+.bang-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.edit-bang,
+.delete-bang {
+  padding: 6px 12px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  font-size: 14px;
+  font-weight: 500;
+  min-width: 70px;
+}
+
+.edit-bang {
+  background: #2c3e50;
+  color: #fff;
+}
+
+.edit-bang:hover:not(.disabled) {
+  background: #34495e;
+}
+
+.delete-bang {
+  background: #c0392b;
+  color: #fff;
+}
+
+.delete-bang:hover:not(.disabled) {
+  background: #e74c3c;
+}
+
+.edit-bang.disabled,
+.delete-bang.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: #2c2c2c;
+}
+
+/* Remove old image styles */
+.edit-bang img,
+.delete-bang img {
+  display: none;
+}
+
+.add-bang-btn {
+  width: 100%;
+  padding: 8px 16px;
+  background: #198754;
+  color: white;
+  border-radius: 4px;
+  font-weight: 500;
+  margin-bottom: 16px;
+}
+
+.add-bang-btn:hover {
+  background: #157347;
+}
+
+.add-bang-form {
+  background: #222;
+  padding: 16px;
+  border-radius: 4px;
+  margin-top: 16px;
+  border: 1px solid #333;
+}
+
+.add-bang-form h3 {
+  margin-bottom: 16px;
+  color: #fff;
+}
+
+.add-bang-form input {
+  width: 100%;
+  padding: 8px 12px;
+  margin-bottom: 12px;
+  border: 1px solid #333;
+  border-radius: 4px;
+  background: #2c2c2c;
+  color: #fff;
+}
+
+.form-buttons {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  margin-top: 16px;
+}
+
+.save-new-bang,
+.save-edit-bang {
+  padding: 8px 16px;
+  background: #198754;
+  color: white;
+  border-radius: 4px;
+}
+
+.save-new-bang:hover,
+.save-edit-bang:hover {
+  background: #157347;
+}
+
+.cancel-new-bang,
+.cancel-edit-bang {
+  padding: 8px 16px;
+  background: #495057;
+  color: white;
+  border-radius: 4px;
+}
+
+.cancel-new-bang:hover,
+.cancel-edit-bang:hover {
+  background: #373b3e;
+}
+
+.edit-bang-form {
+  background: #222;
+  border-color: #333;
+  margin: 8px 0;
+}
+
+.edit-bang-form h3 {
+  color: #fff;
+}
+
+.edit-bang-form input {
+  background: #2c2c2c;
+  border-color: #333;
+  color: #fff;
+}
+
+/* Scrollbar Styling */
+.bangs-list::-webkit-scrollbar {
+  width: 8px;
+}
+
+.bangs-list::-webkit-scrollbar-track {
+  background: #1a1a1a;
+  border-radius: 4px;
+}
+
+.bangs-list::-webkit-scrollbar-thumb {
+  background: #333;
+  border-radius: 4px;
+}
+
+.bangs-list::-webkit-scrollbar-thumb:hover {
+  background: #444;
+}
+
+/* Input placeholder colors */
+::placeholder {
+  color: #666;
+  opacity: 1;
+}
+
+:-ms-input-placeholder {
+  color: #666;
+}
+
+::-ms-input-placeholder {
+  color: #666;
+}
