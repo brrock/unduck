@@ -1,6 +1,25 @@
 import { bangs } from "./bang";
 import "./global.css";
 
+// Define interfaces for bang types
+interface BaseBang {
+  t: string;
+  u: string;
+  d: string;
+  r: number;
+  s: string;
+}
+
+interface ExtendedBang extends BaseBang {
+  c: string;
+  sc: string;
+}
+
+type Bang = BaseBang | ExtendedBang;
+
+// Assert the type of bangs
+const typedBangs = bangs as Bang[];
+
 function setCookie(name: string, value: string, days = 365) {
   const expires = new Date();
   expires.setTime(expires.getTime() + days * 24 * 60 * 60 * 1000);
@@ -68,7 +87,7 @@ function noSearchDefaultPageRender() {
   bangInput.addEventListener("input", () => {
     if (!bangInput.value) return;
     // @ts-ignore omg
-    if (bangs.some((b) => b.t === bangInput.value)) {
+    if (typedBangs.some((b) => b.t === bangInput.value)) {
       localStorage.setItem("default-bang", bangInput.value);
       setCookie("default-bang", bangInput.value);
       bangInput.setCustomValidity("");
@@ -80,8 +99,10 @@ function noSearchDefaultPageRender() {
 }
 
 const LS_DEFAULT_BANG = localStorage.getItem("default-bang") || getCookie("default-bang") || "g";
-// @ts-ignore omg
-const defaultBang = bangs.find((b) => b.t === LS_DEFAULT_BANG);
+
+const defaultBang = typedBangs.find((b) => 
+  typeof b === 'object' && b !== null && 't' in b && b.t === LS_DEFAULT_BANG
+);
 
 function getBangredirectUrl() {
   const url = new URL(window.location.href);
@@ -94,16 +115,17 @@ function getBangredirectUrl() {
   const match = query.match(/!(\S+)/i);
 
   const bangCandidate = match?.[1]?.toLowerCase();
-  // @ts-ignore omg
-  const selectedBang = bangs.find((b) => b.t === bangCandidate) ?? defaultBang;
+  const selectedBang = typedBangs.find((b) => 
+    typeof b === 'object' && b !== null && 'u' in b && 't' in b && b.t === bangCandidate
+  ) ?? defaultBang;
 
   // Remove the first bang from the query
   const cleanQuery = query.replace(/!\S+\s*/i, "").trim();
 
   // Format of the url is:
   // https://www.google.com/search?q={{{s}}}
-  // @ts-ignore omg
-  const searchUrl = selectedBang?.u.replace(
+
+  const searchUrl = selectedBang?.u?.replace(
     "{{{s}}}",
     // Replace %2F with / to fix formats like "!ghr+t3dotgg/unduck"
     encodeURIComponent(cleanQuery).replace(/%2F/g, "/")
