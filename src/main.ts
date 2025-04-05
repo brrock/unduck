@@ -50,12 +50,33 @@ function saveCustomBangs(customBangs: CustomBangs) {
   setCookie("custom-bangs", JSON.stringify(customBangs));
 }
 
+// Deleted bangs management
+function getDeletedBangs(): string[] {
+  const deletedBangsStr = getCookie("deleted-bangs");
+  if (!deletedBangsStr) return [];
+  try {
+    return JSON.parse(deletedBangsStr);
+  } catch {
+    return [];
+  }
+}
+
+function saveDeletedBangs(deletedBangs: string[]) {
+  setCookie("deleted-bangs", JSON.stringify(deletedBangs));
+}
+
 function getAllBangs(): Bang[] {
   const customBangs = getCustomBangs();
-  return [...typedBangs, ...Object.values(customBangs)];
+  const deletedBangs = getDeletedBangs();
+  
+  // Filter out the deleted bangs from typedBangs
+  const filteredTypedBangs = typedBangs.filter(b => !deletedBangs.includes(b.t));
+  
+  return [...filteredTypedBangs, ...Object.values(customBangs)];
 }
 
 function noSearchDefaultPageRender() {
+  // biome-ignore lint/style/noNonNullAssertion: <explanation>
   const app = document.querySelector<HTMLDivElement>("#app")!;
   app.innerHTML = `
     <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 20px;">
@@ -175,7 +196,6 @@ function noSearchDefaultPageRender() {
     bangsList.innerHTML = filteredBangs
       .map(b => {
         const isCustomBang = getCustomBangs()[b.t];
-        const disabledTooltip = isCustomBang ? '' : 'Built-in bangs cannot be modified';
         return `
           <div class="bang-item">
             <div class="bang-info">
@@ -185,12 +205,11 @@ function noSearchDefaultPageRender() {
             <div class="bang-actions">
               <button class="edit-bang ${!isCustomBang ? 'disabled' : ''}" 
                 data-bang="${b.t}" 
-                title="${disabledTooltip}">
+                title="${!isCustomBang ? 'Built-in bangs cannot be modified' : ''}">
                 Edit
               </button>
-              <button class="delete-bang ${!isCustomBang ? 'disabled' : ''}" 
-                data-bang="${b.t}"
-                title="${disabledTooltip}">
+              <button class="delete-bang" 
+                data-bang="${b.t}">
                 Delete
               </button>
             </div>
@@ -199,22 +218,44 @@ function noSearchDefaultPageRender() {
       })
       .join("");
 
-    // Add event listeners for delete buttons
-    bangsList.querySelectorAll(".delete-bang:not(.disabled)").forEach(btn => {
+    // Update event listeners for delete buttons (now for all bangs)
+    bangsList.querySelectorAll(".delete-bang").forEach(btn => {
       btn.addEventListener("click", (e) => {
         const bangT = ((e.target as Element).closest('.delete-bang') as HTMLElement)?.dataset.bang;
         if (!bangT) return;
         
         if (confirm(`Are you sure you want to delete the !${bangT} bang?`)) {
           const customBangs = getCustomBangs();
-          delete customBangs[bangT];
-          saveCustomBangs(customBangs);
+          const isCustomBang = !!customBangs[bangT];
+
+          // If it's a custom bang, delete it from customBangs
+          if (isCustomBang) {
+            delete customBangs[bangT];
+            saveCustomBangs(customBangs);
+          } 
+          // If it's a built-in bang, add it to the deletedBangs list
+          else {
+            const deletedBangs = getDeletedBangs();
+            if (!deletedBangs.includes(bangT)) {
+              deletedBangs.push(bangT);
+              saveDeletedBangs(deletedBangs);
+            }
+          }
+
+          // If the deleted bang was the default, reset to "g"
+          if (bangT === bangInput.value) {
+            bangInput.value = "g";
+            bangCurrent.innerText = "g";
+            localStorage.setItem("default-bang", "g");
+            setCookie("default-bang", "g");
+          }
+
           renderBangsList(searchInput.value);
         }
       });
     });
 
-    // Add event listeners for edit buttons
+    // Keep the existing edit button event listeners as they were
     bangsList.querySelectorAll(".edit-bang:not(.disabled)").forEach(btn => {
       btn.addEventListener("click", (e) => {
         const bangT = ((e.target as Element).closest('.edit-bang') as HTMLElement)?.dataset.bang;
