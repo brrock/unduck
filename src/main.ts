@@ -20,24 +20,13 @@ type Bang = BaseBang | ExtendedBang;
 // Assert the type of bangs
 const typedBangs = bangs as Bang[];
 
-function setCookie(name: string, value: string, days = 365) {
-  const expires = new Date();
-  expires.setTime(expires.getTime() + days * 24 * 60 * 60 * 1000);
-  document.cookie = `${name}=${value};expires=${expires.toUTCString()};path=/`;
-}
-
-function getCookie(name: string) {
-  const match = document.cookie.match(new RegExp(`(^| )${name}=([^;]+)`));
-  return match ? match[2] : null;
-}
-
 // Custom bangs management
 interface CustomBangs {
   [key: string]: BaseBang;
 }
 
 function getCustomBangs(): CustomBangs {
-  const customBangsStr = getCookie("custom-bangs");
+  const customBangsStr = localStorage.getItem("custom-bangs");
   if (!customBangsStr) return {};
   try {
     return JSON.parse(customBangsStr);
@@ -47,12 +36,12 @@ function getCustomBangs(): CustomBangs {
 }
 
 function saveCustomBangs(customBangs: CustomBangs) {
-  setCookie("custom-bangs", JSON.stringify(customBangs));
+  localStorage.setItem("custom-bangs", JSON.stringify(customBangs));
 }
 
 // Deleted bangs management
 function getDeletedBangs(): string[] {
-  const deletedBangsStr = getCookie("deleted-bangs");
+  const deletedBangsStr = localStorage.getItem("deleted-bangs");
   if (!deletedBangsStr) return [];
   try {
     return JSON.parse(deletedBangsStr);
@@ -62,7 +51,7 @@ function getDeletedBangs(): string[] {
 }
 
 function saveDeletedBangs(deletedBangs: string[]) {
-  setCookie("deleted-bangs", JSON.stringify(deletedBangs));
+  localStorage.setItem("deleted-bangs", JSON.stringify(deletedBangs));
 }
 
 function getAllBangs(): Bang[] {
@@ -150,8 +139,8 @@ function noSearchDefaultPageRender() {
     }, 2000);
   });
 
-  // Get default bang from localStorage or cookies
-  let savedBang = localStorage.getItem("default-bang") || getCookie("default-bang") || "g";
+  // Get default bang from localStorage
+  let savedBang = localStorage.getItem("default-bang") || "g";
   bangCurrent.innerText = bangInput.value = savedBang;
 
   bangInput.addEventListener("input", () => {
@@ -159,7 +148,6 @@ function noSearchDefaultPageRender() {
     // @ts-ignore omg
     if (typedBangs.some((b) => b.t === bangInput.value)) {
       localStorage.setItem("default-bang", bangInput.value);
-      setCookie("default-bang", bangInput.value);
       bangInput.setCustomValidity("");
       bangCurrent.innerText = bangInput.value;
     } else {
@@ -247,7 +235,6 @@ function noSearchDefaultPageRender() {
             bangInput.value = "g";
             bangCurrent.innerText = "g";
             localStorage.setItem("default-bang", "g");
-            setCookie("default-bang", "g");
           }
 
           renderBangsList(searchInput.value);
@@ -320,7 +307,6 @@ function noSearchDefaultPageRender() {
             bangInput.value = newT;
             bangCurrent.innerText = newT;
             localStorage.setItem("default-bang", newT);
-            setCookie("default-bang", newT);
           }
 
           editForm.remove();
@@ -385,7 +371,7 @@ function noSearchDefaultPageRender() {
   renderBangsList();
 }
 
-const LS_DEFAULT_BANG = localStorage.getItem("default-bang") || getCookie("default-bang") || "g";
+const LS_DEFAULT_BANG = localStorage.getItem("default-bang") || "g";
 
 const defaultBang = typedBangs.find((b) => 
   typeof b === 'object' && b !== null && 't' in b && b.t === LS_DEFAULT_BANG
@@ -399,7 +385,6 @@ function getBangredirectUrl() {
   // If default bang is provided and valid, save it
   if (defaultBangParam && getAllBangs().some(b => b.t === defaultBangParam)) {
     localStorage.setItem("default-bang", defaultBangParam);
-    setCookie("default-bang", defaultBangParam);
   }
 
   if (!query) {

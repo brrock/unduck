@@ -35,7 +35,7 @@ jq -r '. + [
     "s": "ChatGPT",
     "sc": "AI",
     "t": "cgpt",
-    "u": "https://chatgpt.com?q={{{s}}}"
+    "u": "https://chatgpt.com/?q={{{s}}}"
   },
   {
     "c": "AI",
@@ -44,7 +44,7 @@ jq -r '. + [
     "s": "ChatGPT 4o",
     "sc": "AI",
     "t": "cgpt-4o",
-    "u": "https://chatgpt.com?model=4o&q={{{s}}}"
+    "u": "https://chatgpt.com/?model=4o&q={{{s}}}"
   },
   {
     "c": "AI",
@@ -53,7 +53,7 @@ jq -r '. + [
     "s": "ChatGPT o3-mini-high",
     "sc": "AI",
     "t": "cgpt-o3-mini-high",
-    "u": "https://chatgpt.com?model=o3-mini-high&q={{{s}}}"
+    "u": "https://chatgpt.com/?model=o3-mini-high&q={{{s}}}"
   },
   {
     "c": "AI",
@@ -62,16 +62,25 @@ jq -r '. + [
     "s": "ChatGPT o1",
     "sc": "AI",
     "t": "cgpt-o1",
-    "u": "https://chatgpt.com?model=o1&q={{{s}}}"
+    "u": "https://chatgpt.com/?model=o1&q={{{s}}}"
+  },
+    {
+    "c": "AI",
+    "d": "chatgpt.com/?temporary-chat=true",
+    "r": 0,
+    "s": "ChatGPT temp chat",
+    "sc": "AI",
+    "t": "cgpt-temp",
+    "u": "https://chatgpt.com/?temporary-chat=true&q={{{s}}}"
   },
   {
-  "c": "AI",
-  "d": "claude.ai",
-  "r": 0,
-  "s": "Claude",
-  "sc": "AI",
-  "t": "claude",
-  "u": "https://claude.ai/new?q={{{s}}}"
+    "c": "AI",
+    "d": "claude.ai",
+    "r": 0,
+    "s": "Claude",
+    "sc": "AI",
+    "t": "claude",
+    "u": "https://claude.ai/new?q={{{s}}}"
   },
   {
     "c": "AI",
