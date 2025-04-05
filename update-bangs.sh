@@ -30,39 +30,39 @@ echo "export const bangs = " >> "$FINAL_TS"
 jq -r '. + [
   {
     "c": "AI",
-    "d": "chat.openai.com",
+    "d": "chatgpt.com",
     "r": 0,
     "s": "ChatGPT",
     "sc": "AI",
     "t": "cgpt",
-    "u": "https://chat.openai.com?q={{{s}}}"
+    "u": "https://chatgpt.com?q={{{s}}}"
   },
   {
     "c": "AI",
-    "d": "chat.openai.com",
+    "d": "chatgpt.com/?model=4o",
     "r": 0,
     "s": "ChatGPT 4o",
     "sc": "AI",
     "t": "cgpt-4o",
-    "u": "https://chat.openai.com?model=4o&q={{{s}}}"
+    "u": "https://chatgpt.com?model=4o&q={{{s}}}"
   },
   {
     "c": "AI",
-    "d": "chat.openai.com",
+    "d": "chatgpt.com/?model=o3-mini-high",
     "r": 0,
     "s": "ChatGPT o3-mini-high",
     "sc": "AI",
     "t": "cgpt-o3-mini-high",
-    "u": "https://chat.openai.com?model=o3-mini-high&q={{{s}}}"
+    "u": "https://chatgpt.com?model=o3-mini-high&q={{{s}}}"
   },
   {
     "c": "AI",
-    "d": "chat.openai.com",
+    "d": "chatgpt.com/?model=o1",
     "r": 0,
     "s": "ChatGPT o1",
     "sc": "AI",
     "t": "cgpt-o1",
-    "u": "https://chat.openai.com?model=o1&q={{{s}}}"
+    "u": "https://chatgpt.com?model=o1&q={{{s}}}"
   },
   {
   "c": "AI",
