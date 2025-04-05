@@ -375,11 +375,18 @@ function getBangredirectUrl() {
   // Remove the first bang from the query
   const cleanQuery = query.replace(/!\S+\s*/i, "").trim();
 
-  const searchUrl = selectedBang?.u?.replace(
-    "{{{s}}}",
-    // Replace %2F with / to fix formats like "!ghr+t3dotgg/unduck"
-    encodeURIComponent(cleanQuery).replace(/%2F/g, "/")
-  );
+  let searchUrl;
+  if (cleanQuery === "" && selectedBang?.d) {
+    // If there's no search term, just go to the domain
+    searchUrl = `https://${selectedBang.d}`;
+  } else {
+    // Otherwise use the normal URL template with the search term
+    searchUrl = selectedBang?.u?.replace(
+      "{{{s}}}",
+      encodeURIComponent(cleanQuery).replace(/%2F/g, "/")
+    );
+  }
+  
   if (!searchUrl) return null;
 
   return searchUrl;

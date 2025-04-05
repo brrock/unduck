@@ -10,10 +10,8 @@
     "postinstall": "./update-bangs.sh"
   },
   "devDependencies": {
-    "typescript": "~5.8.2",
-    "vite": "^6.2.0"
-  },
-  "dependencies": {
-    "vite-plugin-pwa": "^0.21.1"
+    "typescript": "~5.8.3",
+    "vite": "^6.2.5",
+    "vite-plugin-pwa": "^1.0.0"
   }
 }
