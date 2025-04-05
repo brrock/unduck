@@ -65,6 +65,15 @@ jq -r '. + [
     "u": "https://chat.openai.com?model=o1&q={{{s}}}"
   },
   {
+  "c": "AI",
+  "d": "claude.ai",
+  "r": 0,
+  "s": "Claude",
+  "sc": "AI",
+  "t": "claude",
+  "u": "https://claude.ai/new?q={{{s}}}"
+  },
+  {
     "c": "AI",
     "d": "www.t3.chat",
     "r": 0,
