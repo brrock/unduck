@@ -76,7 +76,7 @@ function noSearchDefaultPageRender() {
           <input 
             type="text" 
             class="url-input"
-            value="https://unduck.link?q=%s"
+            value="https://unduck-chi.vercel.app/?q=%s"
             readonly 
           />
           <button class="copy-button">
