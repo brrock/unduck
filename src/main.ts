@@ -25,6 +25,13 @@ interface CustomBangs {
   [key: string]: BaseBang;
 }
 
+interface ExportData {
+  customBangs: CustomBangs;
+  deletedBangs: string[];
+  defaultBang: string;
+  version: string;
+}
+
 function getCustomBangs(): CustomBangs {
   const customBangsStr = localStorage.getItem("custom-bangs");
   if (!customBangsStr) return {};
@@ -64,6 +71,54 @@ function getAllBangs(): Bang[] {
   return [...filteredTypedBangs, ...Object.values(customBangs)];
 }
 
+function exportSettings() {
+  const data: ExportData = {
+    customBangs: getCustomBangs(),
+    deletedBangs: getDeletedBangs(),
+    defaultBang: localStorage.getItem("default-bang") || "g",
+    version: "1.0"
+  };
+  
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `unduck-settings-${new Date().toISOString().split('T')[0]}.json`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+async function importSettings(file: File): Promise<string> {
+  try {
+    const text = await file.text();
+    const data = JSON.parse(text) as ExportData;
+    
+    // Validate the imported data
+    if (!data.version || !data.customBangs) {
+      throw new Error("Invalid file format");
+    }
+    
+    // Import custom bangs
+    saveCustomBangs(data.customBangs);
+    
+    // Import deleted bangs if present
+    if (data.deletedBangs) {
+      saveDeletedBangs(data.deletedBangs);
+    }
+    
+    // Import default bang if present
+    if (data.defaultBang) {
+      localStorage.setItem("default-bang", data.defaultBang);
+    }
+    
+    return "Settings imported successfully";
+  } catch (error) {
+    throw new Error("Failed to import settings: " + (error as Error).message);
+  }
+}
+
 function noSearchDefaultPageRender() {
   // biome-ignore lint/style/noNonNullAssertion: <explanation>
   const app = document.querySelector<HTMLDivElement>("#app")!;
@@ -99,7 +154,12 @@ function noSearchDefaultPageRender() {
               />
             </div>
             <div class="bangs-list"></div>
-            <button class="add-bang-btn">Add New Bang</button>
+            <div class="bang-actions">
+              <button class="add-bang-btn">Add New Bang</button>
+              <button class="export-btn">Export Settings</button>
+              <input type="file" id="import-input" accept=".json" style="display: none;" />
+              <button class="import-btn">Import Settings</button>
+            </div>
             <div class="add-bang-form" style="display: none;">
               <h3>Add New Bang</h3>
               <input type="text" class="new-bang-t" placeholder="Bang trigger (e.g. 'g')" />
@@ -365,6 +425,38 @@ function noSearchDefaultPageRender() {
 
   cancelNewBangBtn.addEventListener("click", () => {
     addBangForm.style.display = "none";
+  });
+
+  // Add event listeners for import/export
+  const exportBtn = app.querySelector<HTMLButtonElement>(".export-btn")!;
+  const importBtn = app.querySelector<HTMLButtonElement>(".import-btn")!;
+  const importInput = app.querySelector<HTMLInputElement>("#import-input")!;
+
+  exportBtn.addEventListener("click", () => {
+    exportSettings();
+  });
+
+  importBtn.addEventListener("click", () => {
+    importInput.click();
+  });
+
+  importInput.addEventListener("change", async (e) => {
+    const file = (e.target as HTMLInputElement).files?.[0];
+    if (!file) return;
+
+    try {
+      const message = await importSettings(file);
+      alert(message);
+      // Reset the input
+      importInput.value = "";
+      // Refresh the UI
+      renderBangsList(searchInput.value);
+      // Update the default bang display
+      const savedBang = localStorage.getItem("default-bang") || "g";
+      bangCurrent.innerText = bangInput.value = savedBang;
+    } catch (error) {
+      alert(error instanceof Error ? error.message : "Failed to import settings");
+    }
   });
 
   // Initial render

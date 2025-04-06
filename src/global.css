@@ -201,8 +201,8 @@ input, textarea {
 
 .bang-actions {
   display: flex;
-  gap: 8px;
-  flex-shrink: 0;
+  gap: 12px;
+  margin-bottom: 24px;
 }
 
 .edit-bang,
@@ -242,18 +242,41 @@ input, textarea {
   background: #9ca3af;
 }
 
-.add-bang-btn {
-  width: 100%;
+.add-bang-btn,
+.export-btn,
+.import-btn {
   padding: 12px 24px;
-  background: #10b981;
-  color: white;
   border-radius: 8px;
   font-weight: 600;
-  margin-bottom: 24px;
+  transition: all 0.15s;
+  text-align: center;
+}
+
+.add-bang-btn {
+  background: #10b981;
+  color: white;
 }
 
 .add-bang-btn:hover {
   background: #059669;
+}
+
+.export-btn {
+  background: #6366f1;
+  color: white;
+}
+
+.export-btn:hover {
+  background: #4f46e5;
+}
+
+.import-btn {
+  background: #8b5cf6;
+  color: white;
+}
+
+.import-btn:hover {
+  background: #7c3aed;
 }
 
 .add-bang-form,
@@ -337,13 +360,11 @@ input, textarea {
   }
   
   .bang-actions {
-    flex-direction: row;
-    width: 100%;
+    flex-direction: column;
   }
   
-  .edit-bang,
-  .delete-bang {
-    flex: 1;
+  .bang-actions button {
+    width: 100%;
   }
   
   .form-buttons {
@@ -463,6 +484,30 @@ input, textarea {
   .edit-bang.disabled {
     background: #374151;
     opacity: 0.5;
+  }
+
+  .add-bang-btn {
+    background: #059669;
+  }
+  
+  .add-bang-btn:hover {
+    background: #047857;
+  }
+  
+  .export-btn {
+    background: #4f46e5;
+  }
+  
+  .export-btn:hover {
+    background: #4338ca;
+  }
+  
+  .import-btn {
+    background: #7c3aed;
+  }
+  
+  .import-btn:hover {
+    background: #6d28d9;
   }
 }
 
