@@ -185,6 +185,10 @@ input, textarea {
   flex: 1;
   min-width: 0;
   color: #1a1a1a;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
 .bang-info strong {
@@ -313,12 +317,14 @@ input, textarea {
   gap: 12px;
   justify-content: flex-end;
   margin-top: 24px;
+  flex-wrap: wrap;
 }
 
 .save-new-bang,
 .save-edit-bang,
 .cancel-new-bang,
-.cancel-edit-bang {
+.cancel-edit-bang,
+.reset-bang {
   padding: 12px 24px;
   border-radius: 8px;
   font-weight: 600;
@@ -348,6 +354,15 @@ input, textarea {
   background: #4b5563;
 }
 
+.reset-bang {
+  background: #f59e0b;
+  color: white;
+}
+
+.reset-bang:hover {
+  background: #d97706;
+}
+
 @media (max-width: 480px) {
   .content-container {
     padding: 24px 12px;
@@ -373,6 +388,11 @@ input, textarea {
   
   .form-buttons button {
     width: 100%;
+    order: 0;
+  }
+  
+  .save-edit-bang {
+    order: -1;
   }
 }
 
@@ -509,6 +529,16 @@ input, textarea {
   .import-btn:hover {
     background: #6d28d9;
   }
+
+  .modified-badge {
+    background: #b45309;
+    color: #fef3c7;
+  }
+
+  .custom-badge {
+    background: #059669;
+    color: #ecfdf5;
+  }
 }
 
 /* Bang Manager Styles */
@@ -534,4 +564,23 @@ input, textarea {
 .toggle-manager-btn:hover {
   background: #2563eb;
   transform: translateY(-1px);
+}
+
+.modified-badge,
+.custom-badge {
+  font-size: 0.75rem;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.modified-badge {
+  background: #f59e0b;
+  color: #78350f;
+}
+
+.custom-badge {
+  background: #10b981;
+  color: #064e3b;
 }

@@ -68,7 +68,8 @@ function getAllBangs(): Bang[] {
   // Filter out the deleted bangs from typedBangs
   const filteredTypedBangs = typedBangs.filter(b => !deletedBangs.includes(b.t));
   
-  return [...filteredTypedBangs, ...Object.values(customBangs)];
+  // Custom bangs override built-in bangs
+  return [...filteredTypedBangs.filter(b => !customBangs[b.t]), ...Object.values(customBangs)];
 }
 
 function exportSettings() {
@@ -233,6 +234,7 @@ function noSearchDefaultPageRender() {
 
   function renderBangsList(searchTerm = "") {
     const allBangs = getAllBangs();
+    const customBangs = getCustomBangs();
     const filteredBangs = searchTerm
       ? allBangs.filter(b => 
           b.t.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -243,22 +245,23 @@ function noSearchDefaultPageRender() {
 
     bangsList.innerHTML = filteredBangs
       .map(b => {
-        const isCustomBang = getCustomBangs()[b.t];
+        const isCustomBang = !!customBangs[b.t];
+        const builtInBang = typedBangs.find(tb => tb.t === b.t);
+        const isModified = isCustomBang && builtInBang;
         return `
           <div class="bang-item">
             <div class="bang-info">
               <strong>!${b.t}</strong> - ${b.s}
               <span class="bang-domain">${b.d}</span>
+              ${isModified ? '<span class="modified-badge">Modified</span>' : ''}
+              ${isCustomBang && !builtInBang ? '<span class="custom-badge">Custom</span>' : ''}
             </div>
             <div class="bang-actions">
-              <button class="edit-bang ${!isCustomBang ? 'disabled' : ''}" 
-                data-bang="${b.t}" 
-                title="${!isCustomBang ? 'Built-in bangs cannot be modified' : ''}">
+              <button class="edit-bang" data-bang="${b.t}">
                 Edit
               </button>
-              <button class="delete-bang" 
-                data-bang="${b.t}">
-                Delete
+              <button class="delete-bang" data-bang="${b.t}">
+                ${isCustomBang ? 'Delete' : 'Hide'}
               </button>
             </div>
           </div>
@@ -266,16 +269,16 @@ function noSearchDefaultPageRender() {
       })
       .join("");
 
-    // Update event listeners for delete buttons (now for all bangs)
+    // Update event listeners for delete buttons
     bangsList.querySelectorAll(".delete-bang").forEach(btn => {
       btn.addEventListener("click", (e) => {
         const bangT = ((e.target as Element).closest('.delete-bang') as HTMLElement)?.dataset.bang;
         if (!bangT) return;
         
-        if (confirm(`Are you sure you want to delete the !${bangT} bang?`)) {
-          const customBangs = getCustomBangs();
-          const isCustomBang = !!customBangs[bangT];
-
+        const isCustomBang = !!customBangs[bangT];
+        const actionWord = isCustomBang ? "delete" : "hide";
+        
+        if (confirm(`Are you sure you want to ${actionWord} the !${bangT} bang?`)) {
           // If it's a custom bang, delete it from customBangs
           if (isCustomBang) {
             delete customBangs[bangT];
@@ -302,14 +305,14 @@ function noSearchDefaultPageRender() {
       });
     });
 
-    // Keep the existing edit button event listeners as they were
-    bangsList.querySelectorAll(".edit-bang:not(.disabled)").forEach(btn => {
+    // Update event listeners for edit buttons
+    bangsList.querySelectorAll(".edit-bang").forEach(btn => {
       btn.addEventListener("click", (e) => {
         const bangT = ((e.target as Element).closest('.edit-bang') as HTMLElement)?.dataset.bang;
         if (!bangT) return;
         
         const customBangs = getCustomBangs();
-        const bang = customBangs[bangT];
+        const bang = customBangs[bangT] || typedBangs.find(b => b.t === bangT);
         if (!bang) return;
 
         // Show edit form
@@ -324,6 +327,9 @@ function noSearchDefaultPageRender() {
           <div class="form-buttons">
             <button class="save-edit-bang">Save</button>
             <button class="cancel-edit-bang">Cancel</button>
+            ${customBangs[bangT] ? `
+            <button class="reset-bang">Reset to Default</button>
+            ` : ''}
           </div>
         `;
 
@@ -335,6 +341,7 @@ function noSearchDefaultPageRender() {
         // Add event listeners for the edit form buttons
         const saveEditBtn = editForm.querySelector('.save-edit-bang')!;
         const cancelEditBtn = editForm.querySelector('.cancel-edit-bang')!;
+        const resetBtn = editForm.querySelector('.reset-bang');
 
         saveEditBtn.addEventListener('click', () => {
           const newT = (editForm.querySelector('.edit-bang-t') as HTMLInputElement).value.trim();
@@ -370,6 +377,7 @@ function noSearchDefaultPageRender() {
           }
 
           editForm.remove();
+          bangItem.style.display = '';
           renderBangsList(searchInput.value);
         });
 
@@ -377,6 +385,18 @@ function noSearchDefaultPageRender() {
           bangItem.style.display = '';
           editForm.remove();
         });
+
+        if (resetBtn) {
+          resetBtn.addEventListener('click', () => {
+            if (confirm(`Are you sure you want to reset !${bangT} to its default settings?`)) {
+              delete customBangs[bangT];
+              saveCustomBangs(customBangs);
+              editForm.remove();
+              bangItem.style.display = '';
+              renderBangsList(searchInput.value);
+            }
+          });
+        }
       });
     });
   }
