@@ -3,20 +3,18 @@ FROM oven/bun:latest
 
 # Set the working directory inside the container
 WORKDIR /app
+RUN apt update -y
+RUN apt install jq curl -y
 
-# 1. Copy package.json and bun.lockb (or bun.lock) first.
-# This allows Docker to cache the 'bun install' step
-# unless these files change.
-COPY package.json bun.lock ./ # Use bun.lock if you're not using bun create/bun init's default
-
+COPY package.json bun.lock ./
+COPY ./update-bangs.sh ./
 # 2. Install dependencies
-RUN bun install --frozen-lockfile # --frozen-lockfile is good practice for CI/CD
+RUN bun install --frozen-lockfile
 
-# 3. Copy the rest of your application code
 COPY . .
 
-# 4. Expose the port your application will listen on
-EXPOSE 5173 
+RUN bun run build
+EXPOSE 6001
 
-# 5. Command to run your application when the container starts
-CMD ["bun", "run", "start", "--", "--host"] 
+
+CMD bun start --port 6001

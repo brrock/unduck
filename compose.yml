@@ -1,14 +1,11 @@
 services:
   app:
     build: .
-    # Map container port 5173 to host port 5173
     ports:
-      - "5173:5173"
-    # Mount your local code for hot reloading during development
+      - "6001:6001"
     volumes:
       - .:/app
-      - /app/node_modules # Prevent host's node_modules from overwriting container's
+      - /app/node_modules
     environment:
       NODE_ENV: production
-    # Use the restart policy as desired
     restart: unless-stopped
